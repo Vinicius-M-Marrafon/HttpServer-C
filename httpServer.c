@@ -1,6 +1,7 @@
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <windows.h>
 #include <winsock2.h>
@@ -9,7 +10,7 @@
 #define HTTP_PORT 3000
 #define SERVER_IPv4 "192.168.1.10"
 
-const char response_header[] = "HTTP/1.1 200 OK\r\n"
+const char HTTP_200[59] = "HTTP/1.1 200 OK\r\n"
                         "Content-Type: text/html; charset=UTF-8\r\n\r\n";
 
 const char response[] = "HTTP/1.1 200 OK\r\n"
@@ -54,7 +55,7 @@ int main(void)
         listen(s, 1);
 
         printf("[HTTP Server]: Running on: http://%s:%d\n", SERVER_IPv4, HTTP_PORT);
-
+        
         while (true) {
             // Wait for connection
             SOCKET client = accept(s, 0, 0);
@@ -69,9 +70,31 @@ int main(void)
             // (1) Declare the thread addr (As void *)
             // (2) Create the thread (CreateThread)
 
-            // Send the response
-            send(client, response, sizeof response, 0);
-            // write(client, response, sizeof response);
+            // Send the response - static string
+            // send(client, response, sizeof response, 0);
+            
+            // Send the response - HTML file
+            FILE *html = fopen(".\\static\\hello.html", "rb");
+            if (html == NULL) 
+                fprintf(stderr, "[HTTP SERVER]: HTML file not found\n");
+            
+            else {
+                fseek(html, 0L, SEEK_END);
+
+                // Get the position
+                size_t sizeHTML = ftell(html);
+                rewind(html);
+
+                // size_t sizeHeader = strlen(HTTP_200);
+
+                char htmlContent[sizeHTML];
+                // char socketBuffer[sizeHeader + sizeHTML + 2];
+
+                fread(htmlContent, sizeHTML, 1, html);
+
+                send(client, HTTP_200, sizeof HTTP_200, 0);
+                send(client, htmlContent, sizeof htmlContent, 0);
+            }
 
             closesocket(client);
         }
