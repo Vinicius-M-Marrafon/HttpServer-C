@@ -18,3 +18,6 @@
 ### Handle SIGNALs (Interruptions) 
     signal.h: [docs](https://docs.oracle.com/cd/E36784_01/html/E36873/signal.h-3head.html)\
     microsoft singal usage example: [example](https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/signal?view=msvc-170)\
+
+### Searching for favicon.ico images
+    [favicon](https://icons8.com/icons/set/favicon)

@@ -20,7 +20,7 @@ void terminateSignalHandler(int signal)
         closesocket(s);
         WSACleanup();
 
-        puts("[HTTP Server]: Closing service... Bye bye");
+        puts("\r[HTTP Server]: Closing service... Bye bye");
         exit(EXIT_SUCCESS);
     }
 }
@@ -65,7 +65,18 @@ int main(void)
             Request *req = parseRequest(request);
             printf("[REQ METHOD]: %d | Path: %s\n", req->method, req->path);
 
-            sendFile(client, ".\\static\\hello.html");
+            // Tanking the web app icon
+            if (strcmp(req->path, "/favicon.ico") == 0 && req->method == HTTP_GET)
+                sendFile(client, ".\\static\\images\\favicon.ico");
+            
+            else if (strcmp(req->path, "/") == 0 && req->method == HTTP_GET)
+                sendFile(client, ".\\static\\hello.html");
+            else if (strcmp(req->path, "/") == 0 && req->method == HTTP_POST)
+                sendFile(client, ".\\static\\hello.html");
+            else if (strcmp(req->path, "/link.html") == 0 && req->method == HTTP_GET)
+                sendFile(client, ".\\static\\link.html");
+            else
+                sendFile(client, ".\\static\\notfound.html");
 
             deleteRequest(req);
             closesocket(client);
